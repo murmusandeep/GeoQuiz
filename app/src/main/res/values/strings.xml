@@ -17,4 +17,5 @@
 
     //Next
     <string name="next_button">Next</string>
+    <string name="previous_button">Prev</string>
 </resources>
