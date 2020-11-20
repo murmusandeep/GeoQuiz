@@ -16,6 +16,11 @@ public class QuizActivity extends AppCompatActivity {
     private Button mNextButton;
     private TextView mQuestionTextView;
 
+    private int mTotalQuestions;
+    private int mCountCorrectAnswers = 0;
+    private int mTotalQuestionsAnswered = 0;
+
+
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
@@ -36,8 +41,12 @@ public class QuizActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
 
+        mTotalQuestions = mQuestionBank.length;
+
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mTotalQuestionsAnswered = savedInstanceState.getInt("total_answered", 0);
+            mCountCorrectAnswers = savedInstanceState.getInt("total_correct", 0);
         }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -113,13 +122,29 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void checkAnswer(boolean userPressedTrue) {
+
+        // when all questions has been answered
+        if(mTotalQuestionsAnswered == mTotalQuestions) {
+            Toast.makeText(this, "Correct Percentage :" + ((double)mCountCorrectAnswers / mTotalQuestions) * 100, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // when a question has been already answered
+        if(mQuestionBank[mCurrentIndex].isAnsweredAlready()) {
+            Toast.makeText(this, "Already Answered", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
         int messageResId = 0;
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast;
+            mCountCorrectAnswers++;
         } else {
             messageResId = R.string.incorrect_toast;
         }
+        mTotalQuestionsAnswered++;
+        mQuestionBank[mCurrentIndex].setAnsweredAlready(true);
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
                 .show();
     }
