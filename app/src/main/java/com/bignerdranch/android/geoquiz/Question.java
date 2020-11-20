@@ -25,4 +25,5 @@ public class Question {
     public void setAnswerTrue(boolean mAnswerTrue) {
         this.mAnswerTrue = mAnswerTrue;
     }
+
 }
